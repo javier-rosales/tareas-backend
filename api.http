@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/tareas
+Content-Type: application/json
+
+{
+    "title": "titulo tarea",
+    "description": "descripcion aqui",
+    "status": "pendiente",
+    "createdAt": "2025-01-14T10:30:00Z",
+    "idUser": 1
+}
