@@ -1,20 +1,21 @@
 const mongoose = require('mongoose')
 
-const taskSchema = new mongoose.Schema({
-  title: {
+const userSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true
   },
-  description: String,
-  status: {
+  email: {
     type: String,
     required: true
   },
-  createdAt: String,
-  idUser: String
+  password: {
+    type: String,
+    required: true
+  }
 })
 
-taskSchema.set('toJSON', {
+userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -22,4 +23,4 @@ taskSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Task', taskSchema)
+module.exports = mongoose.model('User', userSchema)
