@@ -1,1 +1,10 @@
-GET http://localhost:3001/api/tareas
+POST http://localhost:3001/api/tareas
+Content-Type: application/json
+
+{
+    "title": "esta tarea esta relacionada con un usuario",
+    "description": "descripcion",
+    "status": "pendiente",
+    "createdAt": "fecha",
+    "idUser": "6787e7131cc6f5d77338d30c"
+}

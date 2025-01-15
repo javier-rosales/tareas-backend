@@ -1,24 +1,27 @@
 const usersRouter = require('express').Router()
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
 
-app.post('/', (request, response) => {
-  const body = request.body
+usersRouter.get('/', async (request, response) => {
+  const users = await User.find({})
+  response.json(users)
+})
 
-  if (!body) {
-    return response.status(400).json({
-      error: 'data missing'
-    })
-  }
+usersRouter.post('/', async (request, response) => {
+  const { name, email, password } = request.body
 
-  const user = {
-    id: generateId(users),
-    name: body.name,
-    email: body.email,
-    password: body.password
-  }
+  const saltRounds = 10
+  const passwordHash = await bcrypt.hash(password, saltRounds)
 
-  users = users.concat(user)
+  const user = new User({
+    name,
+    email,
+    passwordHash,
+  })
 
-  response.json(user)
+  const savedUser = await user.save()
+
+  response.status(201).json(savedUser)
 })
 
 module.exports = usersRouter

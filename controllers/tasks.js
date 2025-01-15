@@ -1,5 +1,7 @@
 const tasksRouter = require('express').Router()
 const Task = require('../models/task')
+const user = require('../models/user')
+const User = require('../models/user')
 
 tasksRouter.get('/', (request, response) => {
   Task.find({}).then(tasks => {
@@ -19,27 +21,28 @@ tasksRouter.get('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-tasksRouter.post('/', (request, response, next) => {
+tasksRouter.post('/', async (request, response, next) => {
   const body = request.body
 
-  if (!body) {
-    return response.status(400).json({
-      error: 'data missing'
+  User.findById(body.idUser)
+    .then(user => {
+      const task = new Task({
+        title: body.title,
+        description: body.description,
+        status: body.status,
+        createdAt: body.createdAt,
+        idUser: user.idUser
+      })
+
+      return task.save().then((savedTask) => ({ savedTask, user }))
     })
-  }
-
-  const task = new Task({
-    id: generateId(tasks),
-    title: body.title,
-    description: body.description,
-    status: body.status,
-    createdAt: body.createdAt,
-    idUser: body.idUser
-  })
-
-  task.save()
-    .then(savedTask => {
-      response.status(201).json(savedTask)
+    .then(({ savedTask, user }) => {
+      user.tasks = user.tasks.concat(savedTask._id)
+      
+      user.save()
+        .then(() => {
+          response.json(savedTask)
+        })
     })
     .catch(error => next(error))
 })

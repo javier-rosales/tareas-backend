@@ -7,12 +7,19 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true // Esto se asegura de que el email es unico
   },
-  password: {
+  passwordHash: {
     type: String,
     required: true
-  }
+  },
+  tasks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Task'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
@@ -20,6 +27,7 @@ userSchema.set('toJSON', {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
+    delete returnedObject.passwordHash // No es revelado al frontend
   }
 })
 
