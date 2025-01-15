@@ -87,6 +87,12 @@ app.delete('/api/tareas/:id', (request, response) => {
   response.status(204).end()
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'endpoint desconocido' })
+}
+
+app.use(unknownEndpoint)
+
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running in port ${PORT}`)
