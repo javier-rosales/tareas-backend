@@ -15,10 +15,17 @@ mongoose.connect(url)
   })
 
 const taskSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    required: true
+  },
   description: String,
-  status: String,
-  createdAt: String
+  status: {
+    type: String,
+    required: true
+  },
+  createdAt: String,
+  idUser: String
 })
 
 taskSchema.set('toJSON', {

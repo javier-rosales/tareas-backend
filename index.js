@@ -17,7 +17,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'id con formato invalido' })
-  } 
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
 
   next(error)
 }
@@ -76,7 +78,7 @@ app.post('/api/usuarios', (request, response) => {
   response.json(user)
 })
 
-app.post('/api/tareas', (request, response) => {
+app.post('/api/tareas', (request, response, next) => {
   const body = request.body
 
   if (!body) {
@@ -94,9 +96,11 @@ app.post('/api/tareas', (request, response) => {
     idUser: body.idUser
   })
 
-  task.save().then(savedTask => {
-    response.json(savedTask)
-  })
+  task.save()
+    .then(savedTask => {
+      response.json(savedTask)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/tareas/:id', (request, response, next) => {
@@ -110,7 +114,7 @@ app.put('/api/tareas/:id', (request, response, next) => {
     idUser: body.idUser
   }
 
-  Task.findByIdAndUpdate(request.params.id, task, { new: true })
+  Task.findByIdAndUpdate(request.params.id, task, { new: true, runValidators: true, context: 'query' })
     .then(updatedTask => {
       response.json(updatedTask)
     })
